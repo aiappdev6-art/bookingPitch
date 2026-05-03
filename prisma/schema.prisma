@@ -1,0 +1,79 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+enum Surface {
+  GRASS
+  TURF
+  INDOOR
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  EXPIRED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  phone     String?  @unique
+  email     String?  @unique
+  password  String?
+  role      Role     @default(CUSTOMER)
+  bookings  Booking[]
+  createdAt DateTime @default(now())
+}
+
+model Pitch {
+  id                  String    @id @default(cuid())
+  name                String
+  description         String?
+  imageUrls           String[]
+  pricePerHour        Decimal   @db.Decimal(10, 3)
+  capacity            Int       @default(10)
+  openingTime         String    @default("08:00")
+  closingTime         String    @default("23:00")
+  slotDurationMinutes Int       @default(60)
+  location            String?
+  surface             Surface   @default(GRASS)
+  isActive            Boolean   @default(true)
+  bookings            Booking[]
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  pitch           Pitch         @relation(fields: [pitchId], references: [id], onDelete: Cascade)
+  pitchId         String
+  user            User?         @relation(fields: [userId], references: [id])
+  userId          String?
+  startsAt        DateTime
+  endsAt          DateTime
+  durationHours   Int
+  totalPrice      Decimal       @db.Decimal(10, 3)
+  status          BookingStatus @default(PENDING)
+  customerName    String
+  customerPhone   String
+  customerEmail   String?
+  phoneVerified   Boolean       @default(false)
+  stripeSessionId String?       @unique
+  expiresAt       DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([pitchId, startsAt])
+  @@index([status])
+}

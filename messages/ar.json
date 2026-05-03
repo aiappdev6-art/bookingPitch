@@ -1,0 +1,108 @@
+{
+  "Site": {
+    "name": "حجز ملاعب",
+    "tagline": "احجز ملعب كرة القدم خلال دقائق"
+  },
+  "Nav": {
+    "home": "الرئيسية",
+    "pitches": "الملاعب",
+    "admin": "لوحة الإدارة",
+    "language": "English"
+  },
+  "Home": {
+    "heroTitle": "احجز ملعبك المفضل بسهولة",
+    "heroSubtitle": "تصفح أفضل ملاعب كرة القدم في الكويت واحجز الوقت المناسب لك.",
+    "browse": "تصفح الملاعب",
+    "featured": "ملاعب مميزة"
+  },
+  "Pitches": {
+    "title": "الملاعب المتاحة",
+    "viewDetails": "عرض التفاصيل",
+    "perHour": "/ ساعة",
+    "capacity": "السعة",
+    "surface": "النوع",
+    "location": "الموقع",
+    "bookNow": "احجز الآن",
+    "noPitches": "لا توجد ملاعب متاحة حالياً"
+  },
+  "Surface": {
+    "GRASS": "عشب طبيعي",
+    "TURF": "عشب صناعي",
+    "INDOOR": "مغلق"
+  },
+  "Booking": {
+    "selectDate": "اختر التاريخ",
+    "selectSlot": "اختر الوقت",
+    "duration": "المدة",
+    "hours": "{count, plural, =1 {ساعة} =2 {ساعتان} other {# ساعات}}",
+    "yourDetails": "بياناتك",
+    "name": "الاسم",
+    "phone": "رقم الهاتف",
+    "email": "البريد الإلكتروني (اختياري)",
+    "continue": "متابعة",
+    "summary": "ملخص الحجز",
+    "total": "الإجمالي",
+    "verifyPhone": "تحقق من رقم الهاتف",
+    "otpSent": "تم إرسال رمز التحقق إلى {phone}",
+    "enterCode": "أدخل الرمز المكون من 6 أرقام",
+    "verify": "تحقق",
+    "resend": "إعادة إرسال",
+    "proceedToPayment": "متابعة إلى الدفع",
+    "slotTaken": "تم حجز هذا الوقت بالفعل",
+    "available": "متاح",
+    "unavailable": "غير متاح",
+    "confirmed": "تم تأكيد الحجز",
+    "cancelled": "تم إلغاء الحجز",
+    "thankYou": "شكراً لحجزك!",
+    "bookingId": "رقم الحجز"
+  },
+  "Admin": {
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "dashboard": "اللوحة الرئيسية",
+    "pitches": "الملاعب",
+    "bookings": "الحجوزات",
+    "newPitch": "ملعب جديد",
+    "editPitch": "تعديل الملعب",
+    "deletePitch": "حذف",
+    "name": "الاسم",
+    "description": "الوصف",
+    "pricePerHour": "السعر / ساعة",
+    "capacity": "السعة",
+    "openingTime": "وقت الفتح",
+    "closingTime": "وقت الإغلاق",
+    "slotDuration": "مدة الفترة (دقيقة)",
+    "location": "الموقع",
+    "surface": "النوع",
+    "images": "الصور",
+    "uploadImages": "رفع الصور",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "todayBookings": "حجوزات اليوم",
+    "weekRevenue": "إيرادات الأسبوع",
+    "monthRevenue": "إيرادات الشهر",
+    "occupancy": "نسبة الإشغال",
+    "recentBookings": "أحدث الحجوزات",
+    "status": "الحالة",
+    "customer": "العميل",
+    "pitch": "الملعب",
+    "date": "التاريخ",
+    "amount": "المبلغ",
+    "email": "البريد",
+    "password": "كلمة المرور",
+    "signIn": "دخول",
+    "invalidCredentials": "بيانات الدخول غير صحيحة"
+  },
+  "Status": {
+    "PENDING": "قيد الانتظار",
+    "CONFIRMED": "مؤكد",
+    "CANCELLED": "ملغي",
+    "EXPIRED": "منتهي"
+  },
+  "Common": {
+    "back": "رجوع",
+    "loading": "جارٍ التحميل...",
+    "error": "حدث خطأ",
+    "tryAgain": "حاول مرة أخرى"
+  }
+}

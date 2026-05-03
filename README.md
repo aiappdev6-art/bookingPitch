@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Booking Pitch — Football Pitch Booking (Next.js 16)
 
-## Getting Started
+Bilingual (Arabic RTL / English) football pitch booking platform for Kuwait (KWD).
+Admin manages pitches; customers browse, pick a slot, verify by SMS OTP, pay via Stripe.
 
-First, run the development server:
+## Stack
+- Next.js 16 (App Router, Turbopack) + TypeScript + Tailwind v4
+- PostgreSQL + Prisma 7 (driver-adapter for `pg`)
+- Auth.js v5 (credentials login for admin)
+- Twilio Verify (SMS OTP)
+- Stripe Checkout + webhook
+- Cloudinary (signed image upload)
+- Resend (confirmation email)
+- next-intl (Arabic default, RTL)
+
+## Setup
 
 ```bash
+# 1. Configure env
+cp .env.example .env
+# Fill DATABASE_URL, ADMIN_EMAIL, ADMIN_PASSWORD, and (when ready) Twilio/Stripe/Cloudinary/Resend keys.
+
+# 2. Migrate + seed
+npx prisma migrate dev --name init
+npx prisma db seed
+
+# 3. Run
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Open http://localhost:3000  (will redirect to /ar)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Dev mode without external services
+- **No Twilio key** → OTP step is bypassed (any 6-digit code works on the verify page).
+- **No Stripe key** → checkout auto-confirms the booking and redirects to success.
+- **No Cloudinary** → admin pitch form falls back to pasting image URLs manually.
+- **No Resend** → email is logged to stdout instead of sent.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Going live
+1. **Twilio Verify**: create a Verify service, copy `TWILIO_VERIFY_SERVICE_SID`, plus account SID and auth token.
+2. **Stripe**: enable KWD in your Stripe dashboard, add publishable + secret keys, set up a webhook to `https://YOURDOMAIN/api/webhooks/stripe` for `checkout.session.completed` and `checkout.session.expired`. For local testing: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`.
+3. **Cloudinary**: add cloud name + API key + secret. Signed uploads from the admin form.
+4. **Resend**: add API key, set `RESEND_FROM_EMAIL` to a verified sender.
+5. **Postgres**: any provider (Neon, Supabase, RDS) — set `DATABASE_URL`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Routes
 
-## Learn More
+### Public (locale-prefixed: `/ar/*`, `/en/*`)
+- `/` — landing
+- `/pitches` — list
+- `/pitches/[id]` — details + booking flow
+- `/verify-otp` — phone verification
+- `/checkout/success`, `/checkout/cancel`, `/checkout/start`
 
-To learn more about Next.js, take a look at the following resources:
+### Admin (`/[locale]/admin/*`, role-guarded by middleware)
+- `/admin/login`
+- `/admin` — dashboard (today bookings, week + month revenue, recent bookings)
+- `/admin/pitches`, `/admin/pitches/new`, `/admin/pitches/[id]/edit`
+- `/admin/bookings`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### API
+- `POST /api/otp/send`, `POST /api/otp/verify`
+- `POST /api/checkout` (creates Stripe session)
+- `POST /api/webhooks/stripe`
+- `POST /api/cloudinary/sign` (admin-only signed upload params)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Booking flow
+1. Customer picks date, slot, duration (1–3 h), enters name/phone/email.
+2. Server action creates a `PENDING` booking with a 15-min `expiresAt` (slot is reserved).
+3. Server triggers Twilio SMS OTP. Customer verifies on `/verify-otp`.
+4. Client calls `/api/checkout` → Stripe Checkout URL.
+5. After payment, Stripe webhook flips booking to `CONFIRMED`, sends Resend confirmation email.
+6. Double-booking prevented at DB level by overlap query inside a transaction (`lib/booking.ts`).
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Default admin
+Seed creates an admin from `ADMIN_EMAIL` / `ADMIN_PASSWORD` in `.env`. Sign in at `/[locale]/admin/login`.

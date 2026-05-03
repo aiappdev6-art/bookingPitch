@@ -1,0 +1,108 @@
+{
+  "Site": {
+    "name": "Pitch Booking",
+    "tagline": "Book a football pitch in minutes"
+  },
+  "Nav": {
+    "home": "Home",
+    "pitches": "Pitches",
+    "admin": "Admin",
+    "language": "العربية"
+  },
+  "Home": {
+    "heroTitle": "Book your favorite pitch easily",
+    "heroSubtitle": "Browse the best football pitches in Kuwait and book the time that works for you.",
+    "browse": "Browse pitches",
+    "featured": "Featured pitches"
+  },
+  "Pitches": {
+    "title": "Available pitches",
+    "viewDetails": "View details",
+    "perHour": "/ hour",
+    "capacity": "Capacity",
+    "surface": "Surface",
+    "location": "Location",
+    "bookNow": "Book now",
+    "noPitches": "No pitches available right now"
+  },
+  "Surface": {
+    "GRASS": "Natural grass",
+    "TURF": "Artificial turf",
+    "INDOOR": "Indoor"
+  },
+  "Booking": {
+    "selectDate": "Select date",
+    "selectSlot": "Select time",
+    "duration": "Duration",
+    "hours": "{count, plural, =1 {1 hour} other {# hours}}",
+    "yourDetails": "Your details",
+    "name": "Full name",
+    "phone": "Phone number",
+    "email": "Email (optional)",
+    "continue": "Continue",
+    "summary": "Booking summary",
+    "total": "Total",
+    "verifyPhone": "Verify your phone",
+    "otpSent": "We sent a code to {phone}",
+    "enterCode": "Enter the 6-digit code",
+    "verify": "Verify",
+    "resend": "Resend",
+    "proceedToPayment": "Proceed to payment",
+    "slotTaken": "This slot is already booked",
+    "available": "Available",
+    "unavailable": "Booked",
+    "confirmed": "Booking confirmed",
+    "cancelled": "Booking cancelled",
+    "thankYou": "Thank you for your booking!",
+    "bookingId": "Booking ID"
+  },
+  "Admin": {
+    "login": "Sign in",
+    "logout": "Sign out",
+    "dashboard": "Dashboard",
+    "pitches": "Pitches",
+    "bookings": "Bookings",
+    "newPitch": "New pitch",
+    "editPitch": "Edit pitch",
+    "deletePitch": "Delete",
+    "name": "Name",
+    "description": "Description",
+    "pricePerHour": "Price / hour",
+    "capacity": "Capacity",
+    "openingTime": "Opening time",
+    "closingTime": "Closing time",
+    "slotDuration": "Slot duration (minutes)",
+    "location": "Location",
+    "surface": "Surface",
+    "images": "Images",
+    "uploadImages": "Upload images",
+    "save": "Save",
+    "cancel": "Cancel",
+    "todayBookings": "Today's bookings",
+    "weekRevenue": "Week revenue",
+    "monthRevenue": "Month revenue",
+    "occupancy": "Occupancy",
+    "recentBookings": "Recent bookings",
+    "status": "Status",
+    "customer": "Customer",
+    "pitch": "Pitch",
+    "date": "Date",
+    "amount": "Amount",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "invalidCredentials": "Invalid credentials"
+  },
+  "Status": {
+    "PENDING": "Pending",
+    "CONFIRMED": "Confirmed",
+    "CANCELLED": "Cancelled",
+    "EXPIRED": "Expired"
+  },
+  "Common": {
+    "back": "Back",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "tryAgain": "Try again"
+  }
+}
