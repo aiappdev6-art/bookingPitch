@@ -104,5 +104,14 @@
     "loading": "Loading...",
     "error": "An error occurred",
     "tryAgain": "Try again"
+  },
+  "Chat": {
+    "open": "Open chat",
+    "title": "Booking Assistant",
+    "subtitle": "Ask about pitches, prices, or how to book",
+    "greeting": "Hi! How can I help you book a pitch today?",
+    "placeholder": "Type your message…",
+    "send": "Send",
+    "error": "Sorry, something went wrong. Please try again."
   }
 }

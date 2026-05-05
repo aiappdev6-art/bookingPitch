@@ -7,6 +7,7 @@ import { Cairo, Inter, Fraunces } from "next/font/google";
 import "../globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { Chatbot } from "@/components/chat/chatbot";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans-en" });
 const cairo = Cairo({ subsets: ["arabic", "latin"], variable: "--font-sans-ar" });
@@ -58,6 +59,7 @@ export default async function LocaleLayout({
           <Header locale={locale} />
           <main className="flex-1">{children}</main>
           <Footer />
+          <Chatbot />
         </NextIntlClientProvider>
       </body>
     </html>
