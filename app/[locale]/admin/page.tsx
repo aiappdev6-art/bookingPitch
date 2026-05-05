@@ -2,6 +2,8 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { formatKWD, formatDateTime } from "@/lib/format";
 import { startOfDay, endOfDay, subDays, startOfMonth } from "date-fns";
+import { StatCard } from "@/components/admin/stat-card";
+import { Reveal } from "@/components/ui/reveal";
 
 export default async function AdminDashboardPage({
   params,
@@ -38,62 +40,104 @@ export default async function AdminDashboardPage({
     }).catch(() => []),
   ]);
 
+  const weekN = Number(weekRevenue._sum.totalPrice ?? 0);
+  const monthN = Number(monthRevenue._sum.totalPrice ?? 0);
+
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">{t("dashboard")}</h1>
-      <div className="grid gap-4 sm:grid-cols-3 mb-8">
-        <Stat label={t("todayBookings")} value={String(todayCount)} />
-        <Stat
-          label={t("weekRevenue")}
-          value={formatKWD(weekRevenue._sum.totalPrice?.toString() ?? "0", localeTag)}
+      <Reveal>
+        <h1 className="text-3xl font-bold mb-1">
+          <span className="gradient-text">{t("dashboard")}</span>
+        </h1>
+        <p className="text-[var(--muted-foreground)] mb-8">
+          {formatDateTime(now, localeTag)}
+        </p>
+      </Reveal>
+
+      <div className="grid gap-4 sm:grid-cols-3 mb-10">
+        <StatCard
+          label={t("todayBookings")}
+          numeric={todayCount}
+          icon="📅"
+          delay={0}
         />
-        <Stat
+        <StatCard
+          label={t("weekRevenue")}
+          numeric={weekN}
+          decimals={3}
+          suffix=" KWD"
+          icon="💰"
+          delay={0.1}
+        />
+        <StatCard
           label={t("monthRevenue")}
-          value={formatKWD(monthRevenue._sum.totalPrice?.toString() ?? "0", localeTag)}
+          numeric={monthN}
+          decimals={3}
+          suffix=" KWD"
+          icon="📊"
+          delay={0.2}
         />
       </div>
 
-      <h2 className="text-lg font-semibold mb-3">{t("recentBookings")}</h2>
-      <div className="card overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-[var(--muted)] text-start">
-            <tr>
-              <th className="text-start p-3">{t("customer")}</th>
-              <th className="text-start p-3">{t("pitch")}</th>
-              <th className="text-start p-3">{t("date")}</th>
-              <th className="text-start p-3">{t("amount")}</th>
-              <th className="text-start p-3">{t("status")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {recent.map((b) => (
-              <tr key={b.id} className="border-t border-[var(--border)]">
-                <td className="p-3">{b.customerName}</td>
-                <td className="p-3">{b.pitch.name}</td>
-                <td className="p-3">{formatDateTime(b.startsAt, localeTag)}</td>
-                <td className="p-3">{formatKWD(b.totalPrice.toString(), localeTag)}</td>
-                <td className="p-3">{b.status}</td>
-              </tr>
-            ))}
-            {recent.length === 0 && (
+      <Reveal>
+        <h2 className="text-lg font-semibold mb-3">{t("recentBookings")}</h2>
+        <div className="card overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-[var(--muted)]">
               <tr>
-                <td colSpan={5} className="p-6 text-center text-[var(--muted-foreground)]">
-                  —
-                </td>
+                <th className="text-start p-3 font-semibold">{t("customer")}</th>
+                <th className="text-start p-3 font-semibold">{t("pitch")}</th>
+                <th className="text-start p-3 font-semibold">{t("date")}</th>
+                <th className="text-start p-3 font-semibold">{t("amount")}</th>
+                <th className="text-start p-3 font-semibold">{t("status")}</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {recent.map((b) => (
+                <tr
+                  key={b.id}
+                  className="border-t border-[var(--border)] hover:bg-[var(--muted)]/50 transition"
+                >
+                  <td className="p-3">{b.customerName}</td>
+                  <td className="p-3">{b.pitch.name}</td>
+                  <td className="p-3">{formatDateTime(b.startsAt, localeTag)}</td>
+                  <td className="p-3 font-semibold">
+                    {formatKWD(b.totalPrice.toString(), localeTag)}
+                  </td>
+                  <td className="p-3">
+                    <StatusBadge status={b.status} />
+                  </td>
+                </tr>
+              ))}
+              {recent.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-[var(--muted-foreground)]">
+                    —
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Reveal>
     </div>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function StatusBadge({ status }: { status: string }) {
+  const styles: Record<string, string> = {
+    CONFIRMED: "bg-emerald-100 text-emerald-700 ring-emerald-200",
+    PENDING: "bg-amber-100 text-amber-700 ring-amber-200",
+    CANCELLED: "bg-rose-100 text-rose-700 ring-rose-200",
+    EXPIRED: "bg-slate-100 text-slate-600 ring-slate-200",
+  };
   return (
-    <div className="card p-4">
-      <div className="text-sm text-[var(--muted-foreground)]">{label}</div>
-      <div className="text-2xl font-bold mt-1">{value}</div>
-    </div>
+    <span
+      className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ring-1 ring-inset ${
+        styles[status] ?? styles.PENDING
+      }`}
+    >
+      {status}
+    </span>
   );
 }

@@ -3,13 +3,18 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { Cairo, Inter } from "next/font/google";
+import { Cairo, Inter, Fraunces } from "next/font/google";
 import "../globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans-en" });
 const cairo = Cairo({ subsets: ["arabic", "latin"], variable: "--font-sans-ar" });
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-display",
+  axes: ["SOFT", "WONK", "opsz"],
+});
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -44,7 +49,7 @@ export default async function LocaleLayout({
   const fontFamily = locale === "ar" ? "var(--font-sans-ar)" : "var(--font-sans-en)";
 
   return (
-    <html lang={locale} dir={dir} className={`${fontVar} h-full`}>
+    <html lang={locale} dir={dir} className={`${fontVar} ${fraunces.variable} h-full`}>
       <body
         className="min-h-full flex flex-col"
         style={{ ["--font-sans" as string]: fontFamily }}

@@ -122,7 +122,7 @@ export function BookingFlow({
             <div className="text-sm text-[var(--muted-foreground)]">{t("Pitches.noPitches")}</div>
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-              {slots.map((s) => {
+              {slots.map((s, i) => {
                 const time = new Date(s.startsAt).toLocaleTimeString(localeTag, {
                   hour: "2-digit",
                   minute: "2-digit",
@@ -135,13 +135,10 @@ export function BookingFlow({
                     type="button"
                     disabled={!s.available}
                     onClick={() => setSelectedSlot(s.startsAt)}
-                    className={`py-2 rounded-lg text-sm border transition ${
-                      !s.available
-                        ? "bg-[var(--muted)] text-[var(--muted-foreground)] line-through cursor-not-allowed"
-                        : isSelected
-                        ? "bg-[var(--primary)] text-white border-[var(--primary)]"
-                        : "bg-white border-[var(--border)] hover:border-[var(--primary)]"
+                    className={`slot anim-scale ${
+                      !s.available ? "slot-disabled" : isSelected ? "slot-selected" : ""
                     }`}
+                    style={{ animationDelay: `${i * 20}ms` }}
                   >
                     {time}
                   </button>
