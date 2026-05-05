@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/auth";
+import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Surface } from "@prisma/client";
 
@@ -19,12 +19,6 @@ const pitchSchema = z.object({
   imageUrls: z.array(z.string().url()).default([]),
   isActive: z.boolean().default(true),
 });
-
-async function requireAdmin() {
-  const session = await auth();
-  if (session?.user?.role !== "ADMIN") throw new Error("UNAUTHORIZED");
-  return session;
-}
 
 export async function createPitchAction(input: unknown) {
   await requireAdmin();

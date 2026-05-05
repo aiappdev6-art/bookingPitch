@@ -58,28 +58,19 @@ export function PitchForm({
     if (!files || files.length === 0) return;
     setUploading(true);
     try {
-      const sigRes = await fetch("/api/cloudinary/sign", { method: "POST" });
-      const sig = await sigRes.json();
-      if (!sig.ok) throw new Error("Cloudinary not configured");
       const urls: string[] = [];
       for (const file of Array.from(files)) {
         const fd = new FormData();
         fd.append("file", file);
-        fd.append("api_key", sig.apiKey);
-        fd.append("timestamp", String(sig.timestamp));
-        fd.append("signature", sig.signature);
-        fd.append("folder", sig.folder);
-        const up = await fetch(
-          `https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`,
-          { method: "POST", body: fd }
-        );
+        const up = await fetch("/api/storage/upload", { method: "POST", body: fd });
         const d = await up.json();
-        if (d.secure_url) urls.push(d.secure_url);
+        if (d.ok && d.url) urls.push(d.url);
+        else throw new Error(d.error || "Upload failed");
       }
       update("imageUrls", [...form.imageUrls, ...urls]);
     } catch (err) {
       console.error(err);
-      setError("Upload failed (Cloudinary not configured?). Paste image URLs manually below.");
+      setError("Upload failed. Paste image URLs manually below.");
     } finally {
       setUploading(false);
     }

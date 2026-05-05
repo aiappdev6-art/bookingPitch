@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export function LoginForm({ locale }: { locale: string }) {
   const t = useTranslations("Admin");
@@ -15,13 +15,18 @@ export function LoginForm({ locale }: { locale: string }) {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const res = await signIn("credentials", {
+    const supabase = createSupabaseBrowserClient();
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
-      redirect: false,
     });
     setLoading(false);
-    if (res?.error) {
+    if (signInError || !data.user) {
+      setError(t("invalidCredentials"));
+      return;
+    }
+    if (data.user.app_metadata?.role !== "ADMIN") {
+      await supabase.auth.signOut();
       setError(t("invalidCredentials"));
       return;
     }

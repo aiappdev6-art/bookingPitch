@@ -1,6 +1,8 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
 import { Link } from "@/i18n/navigation";
-import { auth, signOut } from "@/auth";
+import { getCurrentUser } from "@/lib/auth";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function AdminLayout({
   children,
@@ -12,11 +14,11 @@ export default async function AdminLayout({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("Admin");
-  const session = await auth();
+  const user = await getCurrentUser();
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
-      {session?.user?.role === "ADMIN" && (
+      {user?.role === "ADMIN" && (
         <nav className="flex flex-wrap items-center gap-4 mb-6 pb-4 border-b border-[var(--border)]">
           <Link href="/admin" className="font-semibold">
             {t("dashboard")}
@@ -26,7 +28,9 @@ export default async function AdminLayout({
           <form
             action={async () => {
               "use server";
-              await signOut({ redirectTo: `/${locale}` });
+              const supabase = await createSupabaseServerClient();
+              await supabase.auth.signOut();
+              redirect(`/${locale}`);
             }}
             className="ms-auto"
           >
