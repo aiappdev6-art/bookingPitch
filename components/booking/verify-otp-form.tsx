@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 
 export function VerifyOtpForm({ bookingId, phone }: { bookingId: string; phone: string }) {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -20,23 +21,26 @@ export function VerifyOtpForm({ bookingId, phone }: { bookingId: string; phone: 
       headers: { "Content-Type": "application/json" },
     });
     const data = await res.json();
-    setSubmitting(false);
     if (!data.ok) {
+      setSubmitting(false);
       setError(t("Common.error"));
       return;
     }
-    // redirect to checkout via API that returns Stripe URL
+
+    // Create a MyFatoorah payment session and redirect to the hosted page.
     const checkout = await fetch("/api/checkout", {
       method: "POST",
-      body: JSON.stringify({ bookingId }),
+      body: JSON.stringify({ bookingId, locale }),
       headers: { "Content-Type": "application/json" },
     });
     const cdata = await checkout.json();
-    if (cdata.url) {
-      window.location.href = cdata.url;
-    } else {
-      // No Stripe — go to a mock success
+    setSubmitting(false);
+    if (cdata.paymentUrl) {
+      window.location.href = cdata.paymentUrl;
+    } else if (cdata.dev) {
       router.push({ pathname: "/checkout/success", query: { booking: bookingId } });
+    } else {
+      setError(cdata.error || t("Common.error"));
     }
   };
 
