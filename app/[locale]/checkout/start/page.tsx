@@ -52,7 +52,29 @@ export default async function CheckoutStartPage({
 
   if (error || !data?.paymentUrl) {
     console.error("create-payment failed:", error, data);
-    redirect(`/${locale}/checkout/cancel?booking=${bookingId}`);
+    return (
+      <div className="max-w-xl mx-auto px-4 py-12">
+        <div className="card p-6">
+          <h1 className="text-xl font-bold mb-3">Payment init failed</h1>
+          <p className="text-sm mb-2">
+            The MyFatoorah payment session could not be created. Details below
+            (also visible in Vercel + Supabase logs):
+          </p>
+          <pre className="text-xs bg-black/5 p-3 rounded overflow-auto whitespace-pre-wrap">
+{JSON.stringify(
+  {
+    invokeError: error?.message ?? error ?? null,
+    response: data ?? null,
+    supabaseUrlSet: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
+    serviceRoleKeySet: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+  },
+  null,
+  2,
+)}
+          </pre>
+        </div>
+      </div>
+    );
   }
 
   await prisma.booking
