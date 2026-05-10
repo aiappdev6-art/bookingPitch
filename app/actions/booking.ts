@@ -2,7 +2,6 @@
 
 import { z } from "zod";
 import { createPendingBooking, getAvailability, SlotConflictError } from "@/lib/booking";
-import { sendOtp, isTwilioConfigured } from "@/lib/twilio";
 
 const startBookingSchema = z.object({
   pitchId: z.string().min(1),
@@ -31,16 +30,7 @@ export async function startBookingAction(input: unknown): Promise<StartBookingRe
       customerEmail: parsed.data.customerEmail || undefined,
     });
 
-    if (isTwilioConfigured()) {
-      try {
-        await sendOtp(parsed.data.customerPhone);
-        return { ok: true, bookingId: booking.id, otpRequired: true };
-      } catch (e) {
-        console.error("OTP send failed:", e);
-        return { ok: false, error: "OTP_FAILED" };
-      }
-    }
-    // Dev bypass: skip OTP if Twilio isn't configured
+    // OTP disabled for now — go straight to payment.
     return { ok: true, bookingId: booking.id, otpRequired: false, otpDevBypass: true };
   } catch (err) {
     if (err instanceof SlotConflictError) return { ok: false, error: "SLOT_CONFLICT" };
